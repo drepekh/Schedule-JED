@@ -1,7 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using MelonLoader;
+#if IL2CPP
+using Il2CppScheduleOne.Product;
+using Il2CppScheduleOne.Properties;
+using Il2CppScheduleOne.StationFramework;
+#else
 using ScheduleOne.Product;
+#endif
 
 namespace JustEnoughDrugs.Models
 {
@@ -44,15 +50,15 @@ namespace JustEnoughDrugs.Models
         private bool MatchesEffects(ProductEntry entry, string searchText)
         {
             var effectList = new List<string>();
-            entry.Definition.Properties.ForEach(p => effectList.Add(p.ToString().ToLowerInvariant()));
+            entry.Definition.Properties.ForEach((Action<Property>)(p => effectList.Add(p.ToString().ToLowerInvariant())));
             return MatchesSearch(effectList, searchText);
         }
 
         private bool MatchesIngredients(ProductEntry entry, string searchText)
         {
             var ingredientList = new List<string>();
-            entry.Definition.Recipes.ForEach(r => r.Ingredients.ForEach(i =>
-                ingredientList.Add(i.Item.ToString().ToLowerInvariant())));
+            entry.Definition.Recipes.ForEach((Action<StationRecipe>)(r => r.Ingredients.ForEach((Action<StationRecipe.IngredientQuantity>)(i =>
+                ingredientList.Add(i.Item.ToString().ToLowerInvariant())))));
 
             return MatchesSearch(ingredientList, searchText);
         }

@@ -1,6 +1,10 @@
 using System.Collections.Generic;
+#if IL2CPP
+using Il2CppScheduleOne.Product;
+#else
 using ScheduleOne.Product;
 using ScheduleOne.Property;
+#endif
 
 namespace JustEnoughDrugs.Models
 {

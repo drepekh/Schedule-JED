@@ -3,8 +3,13 @@ using HarmonyLib;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+#if IL2CPP
+using Il2CppScheduleOne.Product;
+using Il2CppScheduleOne.Property;
+#else
 using ScheduleOne.Product;
 using ScheduleOne.Property;
+#endif
 using JustEnoughDrugs.UI;
 using JustEnoughDrugs.Models;
 using JustEnoughDrugs.Utils;

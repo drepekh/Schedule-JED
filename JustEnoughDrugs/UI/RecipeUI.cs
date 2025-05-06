@@ -1,9 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+#if IL2CPP
+using Il2CppScheduleOne.Product;
+using Il2CppScheduleOne.UI.Tooltips;
+using Il2CppInterop.Runtime;
+#else
 using ScheduleOne.Property;
 using ScheduleOne.Product;
 using ScheduleOne.UI.Tooltips;
+#endif
+
 namespace JustEnoughDrugs.UI
 {
     public class RecipeUI
@@ -41,7 +48,7 @@ namespace JustEnoughDrugs.UI
 
         private GameObject CreateRecipeContainer(Transform parent)
         {
-            var root = new GameObject("FullRecipeValue", typeof(RectTransform), typeof(VerticalLayoutGroup));
+            var root = new GameObject("FullRecipeValue", TypeOf<RectTransform>(), TypeOf<VerticalLayoutGroup>());
             root.transform.SetParent(parent, false);
 
             var verticalLayout = root.GetComponent<VerticalLayoutGroup>();
@@ -62,7 +69,7 @@ namespace JustEnoughDrugs.UI
             if (existingRow != null)
                 return existingRow.gameObject;
 
-            var row = new GameObject(rowName, typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            var row = new GameObject(rowName, TypeOf<RectTransform>(), TypeOf<HorizontalLayoutGroup>());
             row.transform.SetParent(parent, false);
 
             var layout = row.GetComponent<HorizontalLayoutGroup>();
@@ -76,9 +83,9 @@ namespace JustEnoughDrugs.UI
 
         private void AddIngredientToLine(Transform lineParent, PropertyItemDefinition ingredient)
         {
-            var ingGO = new GameObject(ingredient.name, typeof(Image));
+            var ingGO = new GameObject(ingredient.name, TypeOf<Image>());
             ingGO.transform.SetParent(lineParent, false);
-            var tooltip = ingGO.AddComponent<ScheduleOne.UI.Tooltips.Tooltip>();
+            var tooltip = ingGO.AddComponent<Tooltip>();
             tooltip.text = ingredient.Name;
             var img = ingGO.GetComponent<Image>();
             img.sprite = ingredient.Icon;
@@ -113,17 +120,27 @@ namespace JustEnoughDrugs.UI
 
         private void AddResultIcon(Transform lineParent, PropertyItemDefinition definition)
         {
-            var resultGO = new GameObject(definition.name + "_Result", typeof(Image));
+            var resultGO = new GameObject(definition.name + "_Result", TypeOf<Image>());
             resultGO.transform.SetParent(lineParent, false);
 
             var resultImg = resultGO.GetComponent<Image>();
-            var tooltip = resultGO.AddComponent<ScheduleOne.UI.Tooltips.Tooltip>();
+            var tooltip = resultGO.AddComponent<Tooltip>();
             tooltip.text = definition.Name;
             resultImg.sprite = definition.Icon;
             resultImg.preserveAspect = true;
             resultImg.rectTransform.sizeDelta = new Vector2(INGREDIENT_SIZE, INGREDIENT_SIZE);
         }
 
-
+#if IL2CPP
+        private static Il2CppSystem.Type TypeOf<T>()
+        {
+            return Il2CppType.Of<T>();
+        }
+#else
+        private static Type TypeOf<T>()
+        {
+            return typeof(T);
+        }
+#endif
     }
 }

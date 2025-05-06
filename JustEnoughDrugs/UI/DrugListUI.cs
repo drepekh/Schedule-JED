@@ -2,7 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using MelonLoader;
 using System;
+#if IL2CPP
+using Il2CppScheduleOne.Product;
+#else
 using ScheduleOne.Product;
+#endif
 using System.Collections.Generic;
 using JustEnoughDrugs.Utils;
 using JustEnoughDrugs.Models;
@@ -71,12 +75,12 @@ namespace JustEnoughDrugs.UI
 
             HideOutline();
 
-            foreach (Transform category in drugItems)
+            foreach (Transform category in GetTransformChildren(drugItems))
             {
                 bool drugDisplayed = false;
-                foreach (Transform entries in category)
+                foreach (Transform entries in GetTransformChildren(category))
                 {
-                    foreach (Transform drugItem in entries)
+                    foreach (Transform drugItem in GetTransformChildren(entries))
                     {
                         ProductEntry productEntry = drugItem.GetComponent<ProductEntry>();
 
@@ -111,8 +115,7 @@ namespace JustEnoughDrugs.UI
             }
             MelonLogger.Msg($"updated drug display with search text: {searchText} and filter key: {filterKey}");
 
-            UnityEngine.Object.FindObjectOfType<MonoBehaviour>()?.StartCoroutine(DelayedLayoutRebuild());
-
+            MelonCoroutines.Start(DelayedLayoutRebuild());
 
         }
 
@@ -126,14 +129,14 @@ namespace JustEnoughDrugs.UI
             DrugSorter.SorterType type = (DrugSorter.SorterType)Enum.Parse(typeof(DrugSorter.SorterType), sorterType);
             DrugSorter.SortOrder order = (DrugSorter.SortOrder)Enum.Parse(typeof(DrugSorter.SortOrder), sortOrder);
 
-            foreach (Transform category in drugItems)
+            foreach (Transform category in GetTransformChildren(drugItems))
             {
-                foreach (Transform entries in category)
+                foreach (Transform entries in GetTransformChildren(category))
                 {
                     var drugEntries = new List<ProductEntry>();
                     var drugTransforms = new Dictionary<ProductEntry, Transform>();
 
-                    foreach (Transform drugItem in entries)
+                    foreach (Transform drugItem in GetTransformChildren(entries))
                     {
                         if (drugItem.gameObject.activeSelf)
                         {
@@ -155,7 +158,7 @@ namespace JustEnoughDrugs.UI
                     }
                 }
             }
-            UnityEngine.Object.FindObjectOfType<MonoBehaviour>()?.StartCoroutine(DelayedLayoutRebuild());
+            MelonCoroutines.Start(DelayedLayoutRebuild());
         }
 
         private System.Collections.IEnumerator DelayedLayoutRebuild()
@@ -164,8 +167,11 @@ namespace JustEnoughDrugs.UI
             if (drugItems != null)
             {
                 Canvas.ForceUpdateCanvases();
-
+#if IL2CPP
+                LayoutRebuilder.ForceRebuildLayoutImmediate(drugItems.Cast<RectTransform>());
+#else
                 LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)drugItems);
+#endif
             }
         }
         private void HideOutline()
@@ -175,6 +181,22 @@ namespace JustEnoughDrugs.UI
             {
                 outline.gameObject.SetActive(false);
             }
+        }
+
+        private IEnumerable<Transform> GetTransformChildren(Transform transform)
+        {
+#if IL2CPP
+            foreach (Il2CppSystem.Object childObj in transform)
+            {
+                var child = childObj.Cast<Transform>();
+                yield return child;
+            }
+#else
+            foreach (Transform child in transform)
+            {
+                yield return child;
+            }
+#endif
         }
     }
 }

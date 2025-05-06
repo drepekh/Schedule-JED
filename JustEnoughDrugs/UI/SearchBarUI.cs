@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using MelonLoader;
 using System;
+using UnityEngine.Events;
 
 namespace JustEnoughDrugs.UI
 {
@@ -74,7 +75,7 @@ namespace JustEnoughDrugs.UI
             // Clear button
             CreateClearButton(inputGO);
 
-            inputField.onValueChanged.AddListener((value) => OnSearchTextChanged(value));
+            inputField.onValueChanged.AddListener((UnityAction<String>)(value => OnSearchTextChanged(value)));
 
             return inputField;
         }
@@ -141,7 +142,7 @@ namespace JustEnoughDrugs.UI
             buttonRect.anchoredPosition = new Vector2(-15, -30);
 
             var button = clearBtnGO.AddComponent<Button>();
-            button.onClick.AddListener(() => ClearSearchText());
+            button.onClick.AddListener((UnityAction)(() => ClearSearchText()));
         }
 
         private void ClearSearchText()

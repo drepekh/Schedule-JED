@@ -4,6 +4,7 @@ using MelonLoader;
 using System;
 using System.Collections.Generic;
 using JustEnoughDrugs.Utils;
+using UnityEngine.Events;
 
 namespace JustEnoughDrugs.UI
 {
@@ -95,15 +96,15 @@ namespace JustEnoughDrugs.UI
                 orderComponent.options.Add(new Dropdown.OptionData(option));
             }
 
-            sorterComponent.onValueChanged.AddListener((index) =>
+            sorterComponent.onValueChanged.AddListener((UnityAction<int>)(index =>
             {
                 OnDropdownValueChanged();
-            });
+            }));
 
-            orderComponent.onValueChanged.AddListener((index) =>
+            orderComponent.onValueChanged.AddListener((UnityAction<int>)(index =>
             {
                 OnDropdownValueChanged();
-            });
+            }));
 
             return (sorterComponent, orderComponent);
         }

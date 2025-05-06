@@ -1,18 +1,23 @@
 using UnityEngine;
-using ScheduleOne.PlayerScripts;
-using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-
+using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
+using MelonLoader;
+using JustEnoughDrugs.Models;
+#if IL2CPP
+using Il2CppScheduleOne.DevUtilities;
+using Il2CppScheduleOne;
+using Il2CppScheduleOne.Product;
+#else
+using ScheduleOne.PlayerScripts;
 using ScheduleOne.DevUtilities;
 using ScheduleOne;
-using JustEnoughDrugs.Models;
-using System.Collections.Generic;
 using ScheduleOne.Product;
 using ScheduleOne.Property;
-using MelonLoader;
+#endif
 
 namespace JustEnoughDrugs.UI
 {
@@ -123,6 +128,33 @@ namespace JustEnoughDrugs.UI
             var input = Singleton<GameInput>.Instance;
             var inputAsset = input.PlayerInput;
 
+#if IL2CPP
+            foreach (var actionMap in inputAsset.actions.actionMaps)
+            {
+                foreach (var action in actionMap.actions)
+                {
+                    string bindingString = "";
+                    foreach (var binding in action.bindings)
+                    {
+                        bindingString += ",";
+                        bindingString += binding.path;
+                    }
+
+                    if (bindingString.Contains("/keyboard/tab") ||
+                        bindingString.Contains("/keyboard/escape") ||
+                        bindingString.Contains("/mouse/rightButton"))
+                    {
+                        continue;
+                    }
+
+                    if (action.enabled)
+                    {
+                        action.Disable();
+                        disabledActions.Add(action);
+                    }
+                }
+            }
+#else
             foreach (var action in inputAsset.actions)
             {
                 string bindingString = string.Join(",", action.bindings.Select(b => b.path));
@@ -140,6 +172,7 @@ namespace JustEnoughDrugs.UI
                     disabledActions.Add(action);
                 }
             }
+#endif
         }
 
         private void RestoreShortcuts()

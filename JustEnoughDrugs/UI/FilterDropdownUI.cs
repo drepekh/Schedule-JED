@@ -4,6 +4,7 @@ using MelonLoader;
 using System;
 using System.Collections.Generic;
 using JustEnoughDrugs.Utils;
+using UnityEngine.Events;
 
 namespace JustEnoughDrugs.UI
 {
@@ -69,7 +70,7 @@ namespace JustEnoughDrugs.UI
                 clonedDropdown.options.Add(new Dropdown.OptionData(option));
             }
 
-            clonedDropdown.onValueChanged.AddListener((index) => OnDropdownValueChanged(index));
+            clonedDropdown.onValueChanged.AddListener((UnityAction<int>)(index => OnDropdownValueChanged(index)));
             return clonedDropdown;
         }
 
